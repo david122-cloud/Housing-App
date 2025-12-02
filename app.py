@@ -27,15 +27,24 @@ st.markdown("Enter the features below to predict the median house value.")
 st.header("Input House Features:")
 
 def user_input_features():
-    # These input widgets let the user choose numbers
-    longitude = st.number_input('Longitude (e.g., -122.23)', value=-122.23, step=0.01)
+    # --- Longitude Fix ---
+    # User sees a POSITIVE number (e.g., 122.23)
+    # We force min_value=0 so they cannot type a negative number
+    longitude_input = st.number_input('Longitude (e.g., 122.23)', value=122.23, min_value=0.0, step=0.01)
+    
+    # Model gets a NEGATIVE number (e.g., -122.23) because California is West
+    longitude = -abs(longitude_input)
+
+    # --- Other Features ---
     latitude = st.number_input('Latitude (e.g., 37.88)', value=37.88, step=0.01)
     housing_median_age = st.slider('Housing Median Age', 1, 52, 28)
-    total_rooms = st.number_input('Total Rooms', value=2000, step=100)
-    total_bedrooms = st.number_input('Total Bedrooms', value=400, step=50)
-    population = st.number_input('Population', value=1000, step=100)
-    households = st.number_input('Households', value=380, step=50)
-    median_income = st.number_input('Median Income (in $10k)', value=4.0, step=0.1)
+    
+    # We add min_value=0 to these to prevent impossible negative rooms/people
+    total_rooms = st.number_input('Total Rooms', value=2000, step=100, min_value=1)
+    total_bedrooms = st.number_input('Total Bedrooms', value=400, step=50, min_value=1)
+    population = st.number_input('Population', value=1000, step=100, min_value=1)
+    households = st.number_input('Households', value=380, step=50, min_value=1)
+    median_income = st.number_input('Median Income (in $10k)', value=4.0, step=0.1, min_value=0.0)
     
     # We save these in a dictionary matching the training data structure
     data = {
